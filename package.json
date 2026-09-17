@@ -1,0 +1,14 @@
+{
+  "name": "leetcode",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LeetCode 刷题笔记与题解（jest 单测）",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^30.5.1"
+  }
+}
