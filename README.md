@@ -50,16 +50,19 @@ leetcode/
 | ✅ | [104](problems/binary-tree/104-maximum-depth-of-binary-tree.md) | Maximum Depth of Binary Tree | 简单 | binary-tree |
 | ✅ | [704](problems/binary-search/704-binary-search.md) | Binary Search | 简单 | binary-search |
 | ✅ | [215](problems/heap/215-kth-largest-element-in-an-array.md) | Kth Largest Element in an Array | 中等 | heap |
-| ✅ | [912](problems/sorting/912-sort-an-array.md) | Sort an Array | 中等 | sorting |
+| ✅ | [912](problems/sorting/912-sort-an-array.md) | Sort an Array（六种实现） | 中等 | sorting |
 | ✅ | [78](problems/backtracking/078-subsets.md) | Subsets | 中等 | backtracking |
 | ✅ | [55](problems/greedy/055-jump-game.md) | Jump Game | 中等 | greedy |
 | ✅ | [70](problems/dynamic-programming/070-climbing-stairs.md) | Climbing Stairs | 简单 | dynamic-programming |
 | ✅ | [121](problems/dynamic-programming/121-best-time-to-buy-and-sell-stock.md) | Best Time to Buy and Sell Stock | 简单 | dynamic-programming |
 | ✅ | [122](problems/dynamic-programming/122-best-time-to-buy-and-sell-stock-ii.md) | Best Time to Buy and Sell Stock II | 中等 | dynamic-programming |
+| ✅ | [188](problems/dynamic-programming/188-best-time-to-buy-and-sell-stock-iv.md) | Best Time to Buy and Sell Stock IV | 困难 | dynamic-programming |
 | ✅ | [136](problems/bit-manipulation/136-single-number.md) | Single Number | 简单 | bit-manipulation |
 | ✅ | [9](problems/math/009-palindrome-number.md) | Palindrome Number | 简单 | math |
 
-「答案」列状态说明：⬜ 待写 / 🚧 进行中 / ✅ 已完成（见各行答案文件）。
+上表 ✅ 表示「题目 + 答案 + 用例」三件套都已就位。
+
+`problems/` 里每题的 md 是力扣官网题干原文（逐题抓取，含示例与约束）；`solutions/` 里是对应 JS 答案，`tests/` 里是 jest 用例。`dp/` 是历史草稿区（内含正在推敲的 188 早期版本），**保留不动**；正式三件套以上面的目录为准，两边互不干扰。
 
 ## 运行
 
@@ -68,4 +71,8 @@ npm test              # 跑全部用例
 npm test -- 001       # 只跑某一题（文件名模糊匹配）
 npm run test:watch
 ```
+
+## 计算机基础面试题
+
+见 [basics/](basics/README.md)，按 `os / network / database / architecture / data-structure` 分目录，共约 125 题 + 答案。
 # leetcode

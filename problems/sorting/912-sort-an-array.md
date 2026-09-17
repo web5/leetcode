@@ -26,3 +26,16 @@
 
 - `1 <= nums.length <= 5 * 10^4`
 - `-5 * 10^4 <= nums[i] <= 5 * 10^4`
+
+## 附：本题可用的排序实现对照
+
+| 实现 | 平均时间 | 最坏时间 | 空间 | 稳定 | 适合本题 |
+| --- | --- | --- | --- | --- | --- |
+| 归并排序 mergeSort | O(n log n) | O(n log n) | O(n) | 稳定 | ✅（默认答案） |
+| 快速排序 quickSort | O(n log n) | O(n^2) | O(log n) | 否 | ✅（实际最快） |
+| 堆排序 heapSort | O(n log n) | O(n log n) | O(1) | 否 | ✅（空间最优） |
+| 计数排序 countingSort | O(n + k) | O(n + k) | O(k) | 稳定 | ✅（值域有界时） |
+| 插入排序 insertionSort | O(n^2) | O(n^2) | O(1) | 稳定 | ❌ 会超时 |
+| 冒泡排序 bubbleSort | O(n^2) | O(n^2) | O(1) | 稳定 | ❌ 会超时 |
+
+六种实现都在答案文件里，各自导出，可单独 require 测试。

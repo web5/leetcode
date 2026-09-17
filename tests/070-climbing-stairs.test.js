@@ -13,7 +13,7 @@ describe('70. 爬楼梯', () => {
     expect(climbStairs(1)).toBe(1)
   })
 
-  test('上限：n = 45 不溢出', () => {
-    expect(climbStairs(45)).toBe(1134903170)
+  test('上限：n = 45 → 1836311903（即 Fib(46)，仍在安全整数内）', () => {
+    expect(climbStairs(45)).toBe(1836311903)
   })
 })
