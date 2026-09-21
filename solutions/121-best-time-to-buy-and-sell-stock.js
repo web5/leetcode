@@ -1,28 +1,25 @@
 /**
  * 121. 买卖股票的最佳时机（简单）
  * 题目：problems/dynamic-programming/121-best-time-to-buy-and-sell-stock.md
- * 思路：一次遍历，贪心/DP——一边更新「历史最低买入价」，一边用当前价 - 最低价更新最大收益。
+ * 思路：状态压缩 DP。dp[i][0] 不持有 / dp[i][1] 持有，因 dp[i][1] 恒等于 -min(prices[0..i])，
+ *       二维坍缩成「维护历史最低买入价 + 当前价 - 最低价更新最大收益」两个标量。
  * 复杂度：时间 O(n)，空间 O(1)
  */
 function maxProfitOnce(prices) {
   if (!prices || prices.length < 2) return 0
+  // maxProfit 即 dp[i][0]（不持有），minPrice 即 -dp[i][1]（持有）
   let maxProfit = 0
-  // 初始化第一个下标为最小值下标和最小值
+  // 初始化第一天的最低买入价
   let minPrice = prices[0]
-  let minIndex = 0
-  // 一个循环计算最大收益、最小买入价格、最小下标
+  // 一个循环推进「最优不持有」与「最优持有」两个状态
   for (let i = 0; i < prices.length; i++) {
     const price = prices[i]
-    // 贪心算法，动态计算最小值和下标
-    if (price < minPrice) {
-      minPrice = price
-      minIndex = i
-    }
-    const profit = price - minPrice
-    maxProfit = Math.max(maxProfit, profit)
+    // dp[i][0] = max(dp[i-1][0], price - minPrice)：今天不动 或 今天卖出
+    maxProfit = Math.max(maxProfit, price - minPrice)
+    // dp[i][1] = max(dp[i-1][1], -price)：今天不动 或 今天买入（只能交易一次，买入前收益恒为 0）
+    if (price < minPrice) minPrice = price
   }
-  // 如果最小价格是最后一个价格，则没有卖出，收益是 0
-  if (minIndex === prices.length - 1) return 0
+  // 不能获利时 maxProfit 保持初始值 0
   return maxProfit
 }
 

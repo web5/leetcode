@@ -41,6 +41,7 @@ leetcode/
 | ✅ | [125](problems/two-pointers/125-valid-palindrome.md) | Valid Palindrome | 简单 | two-pointers |
 | ✅ | [11](problems/two-pointers/011-container-with-most-water.md) | Container With Most Water | 中等 | two-pointers |
 | ✅ | [3](problems/sliding-window/003-longest-substring-without-repeating-characters.md) | Longest Substring Without Repeating Characters | 中等 | sliding-window |
+| ✅ | [239](problems/sliding-window/239-sliding-window-maximum.md) | Sliding Window Maximum | 困难 | sliding-window |
 | ✅ | [560](problems/prefix-sum/560-subarray-sum-equals-k.md) | Subarray Sum Equals K | 中等 | prefix-sum |
 | ✅ | [49](problems/hash-table/049-group-anagrams.md) | Group Anagrams | 中等 | hash-table |
 | ✅ | [20](problems/stack/020-valid-parentheses.md) | Valid Parentheses | 简单 | stack |

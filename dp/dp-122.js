@@ -29,7 +29,10 @@
  *   1 <= prices.length <= 3 * 10^4
  *   0 <= prices[i] <= 10^4
  *
- * 思路：所有上升段利润全吃。DP 写法保持通用性。
+ * 思路：本题可用差分贪心（把所有上升段的相邻差分加起来），也可用 DP。
+ *       贪心是 DP 的封闭形式特解，仅在「无限次交易 + 无手续费 + 无冷冻期」下成立；
+ *       主解用 DP 是为了保住通用性，方便直接迁移到 123/188/309/714。
+ *       两种写法的对比、证明与失效反例见文件末尾「第 2 段」注释。
  */
 const prices = [7, 1, 5, 4, 2, 6]
  // ── cash ──────────────────────────────────────────
@@ -52,25 +55,56 @@ function maxProfitInfinite(prices) {
   if (!prices || prices.length < 2) return 0
   let cash = 0, //
   hold = -Infinity //
+  let i = 0
   for(const p of prices) {
     const preCash = cash
-    cash = Math.max(cash, hold + p) // 负数 不交易，cash 始终是正收益
-    hold = Math.max(hold, preCash - p)
+    cash = Math.max(cash, hold + p) // 交易后利润现金
+    hold = Math.max(hold, preCash - p) // 账户折算出来的最大利润
+    console.log('i=', i, 'cash>>>', cash, 'hold>>>', hold)
+    i++
   }
   return cash
 }
 
-// function maxProfit(prices) {
+// ── 第 2 段：贪心解法（同一个题的封闭形式解）─────────────────
+// 结论先给：122 用「相邻差分取正累加」完全正确，和上面的 DP 结果一模一样。
+//
+// 为什么成立？
+//   任意一段 [i, j] 的利润可以拆成相邻差分的和：
+//     p[j] - p[i] = (p[i+1]-p[i]) + (p[i+2]-p[i+1]) + ... + (p[j]-p[j-1])
+//   而不同交易区间互不重叠（任何时候最多持一股），所以
+//     总利润 <= Σ max(0, p[i+1] - p[i])   ← 上界：每个差分最多被吃一次，且只值得吃正的
+//     该上界可达（把每个涨价处视作"当天卖出又买回"）  ← 故贪心最优
+//   即：DP 的 hold = max(hold, preCash - p) 里那个 preCash - p 分支，
+//       就是贪心"卖旧买新"动作在 DP 中的投影。
+//
+// 那为什么本文件主推 DP？因为贪心成立依赖 122 的三个特权条件：
+//   无限次交易 + 无手续费 + 无冷冻期
+// 任一条件被拿掉，贪心立刻失效，而 DP 只需改一行转移式：
+//   714 含手续费 fee → cash = Math.max(cash, hold + p - fee)
+//   309 含冷冻期     → 增加 cooldown 状态
+//   123 限 2 次      → 扩成 hold1 / cash1 / hold2 / cash2
+//   188 限 k 次      → 二维 dp[k][state]
+//
+// 反例 1（带手续费）：prices = [1, 3, 4], fee = 2
+//   贪心差分 = (3-1) + (4-3) = 3
+//   真实最优 = 1 买 4 卖，利润 3 - 手续费 2 = 1
+//   ← 贪心把一笔交易拆成两笔，白交两次手续费
+// 反例 2（带冷冻期）：prices = [1, 2, 3]
+//   贪心 = 2；但 1 买 2 卖后第 3 天必须空仓，真实最优 = 1
+//
+// 怎么选：
+//   只求 122 的答案 → 用贪心，三行且最好解释；
+//   要吃下整个股票系列（122/123/188/309/714）→ 用上面的 DP 模板。
+// 复杂度两者相同：O(n) 时间、O(1) 空间。
+// function maxProfitGreedy(prices) {
 //   if (!prices || prices.length < 2) return 0
-//   let maxProfit = 0
+//   let profit = 0
 //   for (let i = 0; i < prices.length - 1; i++) {
-//     const price = prices[i]
-//     const nextPrice = prices[i + 1]
-//     if(nextPrice > price) {
-//       maxProfit += nextPrice - price
-//     }
+//     const diff = prices[i + 1] - prices[i]
+//     if (diff > 0) profit += diff
 //   }
-//   return maxProfit
+//   return profit
 // }
 // 仅在直接 `node dp-122.js` 时执行，被 jest require 时不打印
 if (require.main === module) {
