@@ -97,7 +97,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/13-json-stringify.js
+// 直接跑：node plan/week-03/d5/13-json-stringify.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

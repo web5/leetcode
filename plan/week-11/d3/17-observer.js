@@ -95,7 +95,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/17-observer.js
+// 直接跑：node plan/week-11/d3/17-observer.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

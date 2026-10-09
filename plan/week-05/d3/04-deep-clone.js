@@ -80,7 +80,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/04-deep-clone.js
+// 直接跑：node plan/week-05/d3/04-deep-clone.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

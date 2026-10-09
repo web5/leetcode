@@ -95,7 +95,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/01-debounce-throttle.js
+// 直接跑：node plan/week-02/d2/01-debounce-throttle.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

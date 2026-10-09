@@ -2,7 +2,7 @@
  * 学习参考 · 手撕 05：手写 Promise
  *
  * 配套讲解：plan/week-01/d1/05-promise.notes.md
- * 你的作答文件：plan/week-01/d1/05-promise.js（同题的 d3 / d4 在第 2 周，是后续两次练习）
+ * 你的作答文件：plan/week-01/d1/05-promise.js（同题的第 2、3 天副本在 week-01/d2、week-01/d3）
  * 归档参考实现：archive/handwritten/promise.js（另一种写法，可对照）
  *
  * 跑演示（看真机时序）：node plan/week-01/d1/05-promise.reference.js

@@ -88,7 +88,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/12-promise-pool.js
+// 直接跑：node plan/week-03/d4/12-promise-pool.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

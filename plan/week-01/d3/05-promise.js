@@ -1,5 +1,6 @@
 /**
  * 手撕 05：手写 Promise · 第 3 天：静态方法
+ * 三天三份文件（都在第 1 周）：D1 状态机（week-01/d1）→ D2 then 链（week-01/d2）→ D3 静态方法（本文）
  * 学习资料：见 week-01/d1/ 的 05-promise.notes.md（讲解）与 05-promise.reference.js（分层参考实现）
  * 归档参考实现（另一种写法）：archive/handwritten/promise.js
  * 复现：一刷 ____（提示/独立） · 二刷 ____ · 三刷 ____
@@ -93,7 +94,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/week-02/d4/05-promise.js
+// 直接跑：node plan/week-01/d3/05-promise.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

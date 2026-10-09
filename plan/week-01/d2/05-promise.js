@@ -1,8 +1,9 @@
 /**
  * 手撕 05：手写 Promise · 第 2 天：then 链
+ * 三天三份文件（都在第 1 周）：D1 状态机（week-01/d1）→ D2 then 链（本文）→ D3 静态方法（week-01/d3）
  * 学习资料：见 week-01/d1/ 的 05-promise.notes.md（讲解）与 05-promise.reference.js（分层参考实现）
  * 归档参考实现（另一种写法）：archive/handwritten/promise.js
- * 复现：一刷 ____（提示/独立） · 二刷 ____ · 三刷 ____
+ * 复现：一刷 10-09 提示 · 二刷 ____ · 三刷 ____
  *
  * ── 口述笔记（这题拆 3 天写：状态机 → then 链 → 静态方法）──────
  * 为什么回调必须异步：____（then 注册时若立即执行，会破坏「回调晚于同步代码」的约定）
@@ -12,10 +13,94 @@
  * ─────────────────────────────────────────────────
  */
 
-/** 作答区：手写 Promise，需支持 then / catch / resolve / reject / all / race */
+/** 作答区：第 2 天 —— then 返回新 promise，_run 决定「值透传 / 喂给下一个 / 抛错转 reject」
+ *  今天的目标：让第 2、3 个 check 变绿（静态方法留给 D3）
+ */
+const PENDING = 'pending'
+const FULFILLED = 'fulfilled'
+const REJECTED = 'rejected'
+
+const isThenable = (x) =>
+  x !== null
+  && (typeof x === 'object' || typeof x === 'function')
+  && typeof x.then === 'function'
+
 class MyPromise {
   constructor(executor) {
-    throw new Error('05 MyPromise 未作答')
+    this.state = PENDING
+    this.value = null
+    this.callbacks = []
+
+    const resolve = (value) => this._settle(FULFILLED, value)
+    const reject = (reason) => this._settle(REJECTED, reason)
+
+    try {
+      executor(resolve, reject)
+    } catch (err) {
+      reject(err)
+    }
+  }
+
+  _settle(state, value) {
+    if (this.state !== PENDING) return
+    if (state === FULFILLED && isThenable(value)) {   // 跟随 thenable（A+ 2.3）
+      value.then(
+        (v) => this._settle(FULFILLED, v),
+        (r) => this._settle(REJECTED, r)
+      )
+      return
+    }
+
+    this.state = state
+    this.value = value
+    queueMicrotask(() => {
+      for (const cb of this.callbacks) this._run(cb)
+      this.callbacks = []
+    })
+  }
+
+  _run(cb) {
+    const handler = this.state === FULFILLED ? cb.onFulfilled : cb.onRejected
+
+    if (typeof handler !== 'function') {      // 值穿透：没给 handler 就把状态原样传下去
+      if (this.state === FULFILLED) cb.resolve(this.value)
+      else cb.reject(this.value)
+      return
+    }
+
+    try {
+      cb.resolve(handler(this.value))         // 返回值喂给下一个 promise
+    } catch (err) {
+      cb.reject(err)                          // 回调里抛错 → 下一个变 rejected
+    }
+  }
+
+  then(onFulfilled, onRejected) {
+    const next = new MyPromise((resolve, reject) => {
+      const cb = {
+        onFulfilled,
+        onRejected,
+        resolve: (v) => (v === next
+          ? reject(new Error('Chaining cycle detected for promise'))   // 回调返回自己 → 报错，别递归
+          : resolve(v)),
+        reject,                               // ★ 之前漏了这个属性，_run 的两条路都要用
+      }
+      if (this.state === PENDING) this.callbacks.push(cb)
+      else queueMicrotask(() => this._run(cb))
+    })
+    return next
+  }
+
+  catch(onRejected) {
+    return this.then(undefined, onRejected)
+  }
+
+  finally(onFinally) {
+    // TODO(D3)：依赖静态 resolve / reject；且 onFinally() 返回非 promise 时下面会炸，等静态方法写完再修
+    return this.then(
+      (v) => MyPromise.resolve(onFinally()).then(() => v),
+      (e) => MyPromise.reject(onFinally()).then(() => { throw e })
+    )
   }
 }
 
@@ -93,7 +178,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/week-02/d3/05-promise.js
+// 直接跑：node plan/week-01/d2/05-promise.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

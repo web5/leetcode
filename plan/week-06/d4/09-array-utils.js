@@ -102,7 +102,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/09-array-utils.js
+// 直接跑：node plan/week-06/d4/09-array-utils.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

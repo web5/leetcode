@@ -79,7 +79,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/16-get-type.js
+// 直接跑：node plan/week-04/d5/16-get-type.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

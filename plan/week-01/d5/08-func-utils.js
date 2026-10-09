@@ -98,7 +98,7 @@ async function runAll() {
   if (pass < CHECKS.length) process.exitCode = 1
 }
 
-// 直接跑：node plan/handwritten/08-func-utils.js
+// 直接跑：node plan/week-01/d5/08-func-utils.js
 if (require.main === module) runAll()
 
 // 走 jest：npm test

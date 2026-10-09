@@ -1,6 +1,6 @@
 /**
- * 手撕 05：手写 Promise（A+ 核心 + 静态方法）· 主实现（第 1 周 D1 起，三天一路往下写）
- * 另两份副本：week-02/d3（then 链）、week-02/d4（静态方法）是空白重写位，到那天从零再写一遍
+ * 手撕 05：手写 Promise（A+ 核心 + 静态方法）· 第 1 天：状态机
+ * 三天三份文件（都在第 1 周）：D1 状态机（本文）→ D2 then 链（week-01/d2/05-promise.js）→ D3 静态方法（week-01/d3/05-promise.js）
  * 学习资料（同目录）：05-promise.notes.md（讲解）· 05-promise.reference.js（分层参考实现 + 真机时序演示）
  * 归档参考实现（另一种写法）：archive/handwritten/promise.js
  * 复现：一刷 10-08 提示 · 二刷 ____ · 三刷 ____
@@ -13,14 +13,12 @@
  * ─────────────────────────────────────────────────
  */
 
-/** 作答区：手写 Promise，需支持 then / catch / resolve / reject / all / race */
-const PENDING = 'pedding'
+/** 作答区：第 1 天只做状态机 —— 三态 + 状态只迁移一次 + 回调进微任务
+ *  今天的目标：让第 1 个 check 变绿（then 返回新 promise 留给 D2，静态方法留给 D3）
+ */
+const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
-
-const isThenable = (x) => x !==  null
-  && (typeof x === 'object' || typeof x === 'function')
-  && x.then === 'function'
 
 class MyPromise {
   constructor(executor) {
@@ -30,79 +28,33 @@ class MyPromise {
 
     const resolve = (value) => this._settle(FULFILLED, value)
     const reject = (reason) => this._settle(REJECTED, reason)
+
     try {
       executor(resolve, reject)
-    } catch {
-      reject(err)
+    } catch (err) {
+      reject(err)   // 构造器里抛错 = 主动 reject（规范要求，不是可选行为）
     }
   }
 
   _settle(state, value) {
-    if(this.state !== PENDING) return
-    if(state === FULFILLED && isThenable(value)) {
-      value.then(
-        (v) => this._settle(FULFILLED, v),
-        (r) => this._settle(REJECTED, r)
-      )
-      return
-    }
-
+    if (this.state !== PENDING) return   // ★ 状态只能迁移一次，先到先得
     this.state = state
     this.value = value
     queueMicrotask(() => {
-      for (const cb of this.callbacks) this._run(cb)
+      for (const cb of this.callbacks) {
+        const handler = state === FULFILLED ? cb.onFulfilled : cb.onRejected
+        if (typeof handler === 'function') handler(value)
+      }
       this.callbacks = []
     })
   }
 
-  _run(cb) {
-    const handler = this.state === FULFILLED ? cb.onFulfilled : cb.onRejected
-
-    if(typeof handler !== 'function') {
-      if(this.state === FULFILLED) cb.resolve(this.value)
-      else cb.reject(this.value)
-      return
-    }
-
-    try {
-      cb.resolve(handler(this.value))
-    } catch(err) {
-      cb.reject(err)
-    }
-  }
-
   then(onFulfilled, onRejected) {
-    // if(this.state === FULFILLED) queueMicrotask(() => onFulfilled(this.value))
-    // else if(this.state === REJECTED) queueMicrotask(() => onRejected(this.value))
-    // else this.callbacks.push({onFulfilled, onRejected})
-    const next = new MyPromise((resolve, reject) => {
-      const cb = {
-        onFulfilled,
-        onRejected,
-        resolve: (v) => {
-          v === next ? reject(new Error('Chaining cycle detected for promise')) : resolve(v),
-          reject
-        }
-      }
-      if(this.state === PENDING) this.callbacks.push(cb)
-      else queueMicrotask(() => this._run(cb))
-    })
-    return next
+    // 第 1 天就写这么土：两条路各自「排个微任务」，链式的活儿留到 D2
+    if (this.state === FULFILLED) queueMicrotask(() => onFulfilled(this.value))
+    else if (this.state === REJECTED) queueMicrotask(() => onRejected(this.value))
+    else this.callbacks.push({ onFulfilled, onRejected })
   }
-
-  catch(onRejected) {
-    return this.then(undefined, onRejected)
-  }
-
-  finally(onFinaly) {
-    return this.then(
-      (v) => MyPromise.resolve(onFinaly()).then(() => v),
-      (e) => MyPromise.reject(onFinaly()).then(()=> {
-        throw e
-      })
-    )
-  }
-
 }
 
 /** 自测素材 */

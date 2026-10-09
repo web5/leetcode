@@ -7,8 +7,8 @@
 >
 > 同题在 `week-02/d3`、`week-02/d4` 各还有一份，对应计划里拆的三天（状态机 → then 链 → 静态方法）。本讲解覆盖全部三天，d3/d4 也回来看这里。
 >
-> 📌 **10-08 位置变更**：本题的「状态机」那天原排在第 2 周 D2，已与第 1 周 D1 的「01 防抖 / 节流」**对调**。三个练习日的实际位置现在是：**第 1 周 D1（状态机）→ 第 2 周 D3（then 链）→ 第 2 周 D4（静态方法）**。下文（含 §5、§8）里出现的 `d2 / d3 / d4` 一律按这个新位置理解。
-> 三份副本的分工：`week-01/d1` 是**主实现**（一路往下写）；`week-02/d3`、`week-02/d4` 是**空白重写副本**（到那天从零再写一遍，类体里那句 `未作答` 是正常的）。
+> 📌 **10-08 / 10-09 位置变更**：本题原排在第 2 周 D2/D3/D4；现已调成**连续三天，都在第 1 周**：**D1 状态机（`week-01/d1`）→ D2 then 链（`week-01/d2`）→ D3 静态方法（`week-01/d3`）**。原本占第 1 周 D1/D2/D3 的 01 防抖节流、02 call/apply/bind、03 new/instanceof 依次顺延到第 2 周 D2/D3/D4。
+> 下文（含 §5、§8）里出现的 `d2 / d3 / d4` = 本题的第 1 / 2 / 3 天，即 `week-01/d1`、`week-01/d2`、`week-01/d3`。
 
 ## 0. 怎么用（按顺序，别跳）
 
@@ -191,11 +191,11 @@ items.forEach((item, i) => {
 
 ## 5. 三天怎么分配（对应计划）
 
-| 天 | 目标 | 当天能绿的 check | 为什么是这几个 |
+| 天（文件） | 目标 | 当天能绿的 check | 为什么是这几个 |
 | --- | --- | --- | --- |
-| d2 | **状态机**：三态 + 状态只迁移一次 + executor 同步执行 | **第 1 个** | 它直接把你的 promise 交给 `withDeadline`，不依赖 `then` 的返回值 |
-| d3 | **then 链**：`then` 返回新 promise、值穿透、抛错捕获 | **第 2、3 个** | 都要 `then` / `catch` 返回新 promise，才拿得到链式结果 |
-| d4 | **静态方法**：resolve / all / race | **第 4、5 个** | 需要静态方法 |
+| 第 1 天 · `week-01/d1` | **状态机**：三态 + 状态只迁移一次 + executor 同步执行 | **第 1 个** | 它直接把你的 promise 交给 `withDeadline`，不依赖 `then` 的返回值 |
+| 第 2 天 · `week-01/d2` | **then 链**：`then` 返回新 promise、值穿透、抛错捕获 | **第 2、3 个** | 都要 `then` / `catch` 返回新 promise，才拿得到链式结果 |
+| 第 3 天 · `week-01/d3` | **静态方法**：resolve / all / race | **第 4、5 个** | 需要静态方法 |
 
 > ⚠️ **最容易误判的一点**：d2 只写了「`then` 里 `queueMicrotask` 调回调」时，第 2、3 个 check 会报 **`期望 undefined，实际…` 或「必须返回一个新的 Promise」** —— 那个 `undefined` 是 **`then` 的返回值**（第 1 层没有 `return`），不是 promise 里存的值丢了。状态机写对了也会这样，别去改 `resolve`。
 > 判据：`console.log(p.then(() => {}))` 打印 `undefined` ⇒ 还停在第 1 层，该写 d3 的「返回新 promise」了。
@@ -231,13 +231,13 @@ items.forEach((item, i) => {
 
 ## 8. 自测在验什么（`05-promise.js` 的 5 个 check）
 
-| # | check | 验的是什么 | 属于哪天 |
+| # | check | 验的是什么 | 属于第几天 |
 | --- | --- | --- | --- |
-| 1 | then 回调是异步的（晚于同步代码） | **规则一**；用 `order` 数组对比 `sync` 与 `then` 的先后 | d2 |
-| 2 | 链式 then 与值透传 | **规则二**；`resolve(1).then(+1).then(*10)` 应为 20 | d3 |
-| 3 | 构造函数内抛错 → 走 catch | `try/catch` 包 executor（断言依赖 `catch` 返回 promise） | d3 |
-| 4 | 静态方法 resolve / all（保持入参顺序） | `resolve` 跟随 + `all` 按下标落位（含一个原生 promise 混入） | d4 |
-| 5 | 静态方法 race（取最先结算的） | `race` 的「结算」语义（慢的 80ms vs 立刻 resolve） | d4 |
+| 1 | then 回调是异步的（晚于同步代码） | **规则一**；用 `order` 数组对比 `sync` 与 `then` 的先后 | 第 1 天 |
+| 2 | 链式 then 与值透传 | **规则二**；`resolve(1).then(+1).then(*10)` 应为 20 | 第 2 天 |
+| 3 | 构造函数内抛错 → 走 catch | `try/catch` 包 executor（断言依赖 `catch` 返回 promise） | 第 2 天 |
+| 4 | 静态方法 resolve / all（保持入参顺序） | `resolve` 跟随 + `all` 按下标落位（含一个原生 promise 混入） | 第 3 天 |
+| 5 | 静态方法 race（取最先结算的） | `race` 的「结算」语义（慢的 80ms vs 立刻 resolve） | 第 3 天 |
 
 ### 自己补 reject 用例时怎么写（原第 6–8 个 check 已按你的要求删掉，套路留在这里）
 

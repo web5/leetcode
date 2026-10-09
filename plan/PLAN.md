@@ -81,15 +81,15 @@ leetcode/                       # 根目录只保留两桶 + 配置文件
 | `xxx.notes.md` | 讲解：语义差别、分层实现、易错点、面试话术 | 不会 |
 | `xxx.reference.js` | 学习用的分层参考实现 + 可跑演示 | **不会**（`jest.config` 已按 `*.reference.js` 排除） |
 
-已有：手撕 01（现排在第 2 周 D2）与手撕 05（现排在第 1 周 D1）都配齐了 `xxx.notes.md` + `xxx.reference.js`。
+已有：手撕 **05 占第 1 周 D1/D2/D3 三天**（状态机 → then 链 → 静态方法），`week-01/d1/` 配了 `xxx.notes.md` + `xxx.reference.js`；手撕 **01（防抖 / 节流）** 现排在第 2 周 D2。
 
 下面这张表是**考点索引**（链接指向该题第一次出现的文件）；重复出现的「重写 / 口述」日会各拿一份**全新的 TODO 副本**——重写时才不会被上一版的实现干扰。参考实现在 `archive/handwritten/`（写完再对照）。
 
 | # | 题目 | 作答 + 自测 | 核心考点 |
 | --- | --- | --- | --- |
 | 01 | 防抖 / 节流 | [01-debounce-throttle.js](week-02/d2/01-debounce-throttle.js) | 闭包存定时器、this 与参数透传、leading/trailing |
-| 02 | call / apply / bind | [02-call-apply-bind.js](week-01/d2/02-call-apply-bind.js) | 「挂到目标对象再调用」、bind 的 new 语义与偏函数 |
-| 03 | new / instanceof | [03-new-instanceof.js](week-01/d3/03-new-instanceof.js) | 原型链四步、构造函数返回值规则 |
+| 02 | call / apply / bind | [02-call-apply-bind.js](week-02/d3/02-call-apply-bind.js) | 「挂到目标对象再调用」、bind 的 new 语义与偏函数 |
+| 03 | new / instanceof | [03-new-instanceof.js](week-02/d4/03-new-instanceof.js) | 原型链四步、构造函数返回值规则 |
 | 04 | 深拷贝 | [04-deep-clone.js](week-01/d4/04-deep-clone.js) | WeakMap 处理循环引用、Date/RegExp 分派 |
 | 05 | 手写 Promise | [05-promise.js](week-01/d1/05-promise.js) | 三态状态机、then 链、resolve/all/race |
 | 06 | 事件总线 | [06-event-emitter.js](week-02/d5/06-event-emitter.js) | on/once/off/emit、快照遍历 |
@@ -166,17 +166,18 @@ leetcode/                       # 根目录只保留两桶 + 配置文件
 | 天 | 新题（2 道） | 二刷（2 道） | 手撕 |
 | --- | --- | --- | --- |
 | D1 | 912 排序数组 —— 盲写 冒泡 / 选择 / 插入 | — | [05 手写 Promise（状态机）](week-01/d1/05-promise.js) ✅ |
-| D2 | 912 —— 盲写 归并 / 三路快排（含随机 pivot） | 217 存在重复元素 | [02 call / apply / bind](week-01/d2/02-call-apply-bind.js) |
-| D3 | 75 颜色分类（三路快排 / 计数两解）· 274 H 指数 | 1 两数之和 | [03 new / instanceof](week-01/d3/03-new-instanceof.js) |
+| D2 | 912 —— 盲写 归并 / 三路快排（含随机 pivot） | 217 存在重复元素 | [05 Promise（then 链）](week-01/d2/05-promise.js) |
+| D3 | 75 颜色分类（三路快排 / 计数两解）· 274 H 指数 | 1 两数之和 | [05 Promise（静态方法）](week-01/d3/05-promise.js) |
 | D4 | 56 合并区间 ★ · 1122 数组的相对排序 | 704 二分查找 | [04 深拷贝](week-01/d4/04-deep-clone.js) |
 | D5 | 215 数组中的第 K 个最大元素（快速选择，重刷）· 347 前 K 个高频元素 | 239 滑动窗口最大值 | [08 函数工具（柯里化 / memoize）](week-01/d5/08-func-utils.js) |
 | D6 | 148 排序链表（归并）★ · 315 计算右侧小于当前元素的个数（困难，归并计数） | 49 字母异位词分组 | [09 数组工具（大数相加 / 千分位）](week-01/d6/09-array-utils.js) |
 | D7 | 复盘：默写六种排序 + 填下方自查表 + 补决策树排序条目 | — | — |
 
-> 📌 **10-08 换序记录**：第 1 周 D1 ⇄ 第 2 周 D2 的**手撕位对调**（文件已跟着搬目录）——
-> D1 做的是 **05 手写 Promise**（`week-01/d1/05-promise.*`）；原 D1 的 **01 防抖 / 节流** 顺延到第 2 周 D2（`week-02/d2/01-debounce-throttle.*`）。
-> **05 的三份副本各有分工**：`week-01/d1` 那份是**主实现**（第 1 周 D1 起一路往下写，现已含状态机 + then 链 + catch）；`week-02/d3`（then 链）、`week-02/d4`（静态方法）是**空白重写副本**——到那天从零再写一遍，别被主实现干扰，**不是文件丢了**。
-> `复现` 在 `week-01/d1/05-promise.js` 文件头记录。
+> 📌 **10-08 / 10-09 排期调整**（文件已跟着搬目录）——
+> **05 手写 Promise 占满第 1 周 D1/D2/D3**：`week-01/d1`（状态机）→ `week-01/d2`（then 链）→ `week-01/d3`（静态方法），一天一份、一天一层；当天该让哪几个 check 变绿见讲解 §5。
+> **被挤出来的两道顺延到第 2 周**：`02 call / apply / bind` → 第 2 周 D3（`week-02/d3/`）；`03 new / instanceof` → 第 2 周 D4（`week-02/d4/`）。
+> 另：原第 1 周 D1 的 `01 防抖 / 节流` → 第 2 周 D2（`week-02/d2/`）。
+> `复现` 字段写在每份文件头。
 
 **排序自查表**（D7 填完，之后每次面试前扫一眼）：
 
@@ -212,8 +213,8 @@ D1 的 912 与 D5 的 215 是**旧题**，完整答案在归档里（[912](../ar
 | --- | --- | --- | --- |
 | D1 | 128 最长连续序列（哈希）· 242 有效的字母异位词 | 1 · 217 | [10 LRU 缓存](week-02/d1/10-lru-cache.js) |
 | D2 | 15 三数之和 ★ · 167 两数之和 II | 11 盛最多水的容器 · 125 验证回文串 | [01 防抖 / 节流](week-02/d2/01-debounce-throttle.js)（从第 1 周 D1 顺延） |
-| D3 | 16 最接近的三数之和 · 18 四数之和 | 3 无重复字符的最长子串 | [05 Promise（then 链）](week-02/d3/05-promise.js) |
-| D4 | 76 最小覆盖子串（困难）★ · 209 长度最小的子数组 | 239 | [05 Promise（静态方法）](week-02/d4/05-promise.js) |
+| D3 | 16 最接近的三数之和 · 18 四数之和 | 3 无重复字符的最长子串 | [02 call / apply / bind](week-02/d3/02-call-apply-bind.js)（从第 1 周 D2 顺延） |
+| D4 | 76 最小覆盖子串（困难）★ · 209 长度最小的子数组 | 239 | [03 new / instanceof](week-02/d4/03-new-instanceof.js)（从第 1 周 D3 顺延） |
 | D5 | 438 找到字符串中所有字母异位词 · 567 字符串的排列 | 560 和为 K 的子数组 | [06 事件总线](week-02/d5/06-event-emitter.js) |
 | D6 | 238 除自身以外数组的乘积 · 41 缺失的第一个正数（困难） | 49 · 125 | [07 并发调度器](week-02/d6/07-concurrency-limit.js) |
 | D7 | 复盘：把滑动窗口两套模板（可变长 / 定长）补进 `templates/09` | — | — |
