@@ -2,11 +2,16 @@
   "name": "leetcode",
   "version": "1.0.0",
   "private": true,
-  "description": "LeetCode 刷题笔记与题解（jest 单测）",
+  "description": "LeetCode 刷题工程。plan/ = 本次计划与按天作答文件，archive/ = 之前的代码与文档",
   "scripts": {
     "test": "jest",
+    "test:archive": "jest --testMatch \"<rootDir>/archive/tests/**/*.test.js\"",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "review": "node plan/scripts/review-progress.js",
+    "review:today": "node plan/scripts/review-progress.js --today",
+    "review:overdue": "node plan/scripts/review-progress.js --overdue",
+    "review:hw": "node plan/scripts/review-progress.js --handwritten"
   },
   "devDependencies": {
     "jest": "^30.5.1"

@@ -1,79 +1,81 @@
-# LeetCode 基础算法题
+# leetcode
 
-## 目录约定
+LeetCode 刷题工程。根目录只保留两桶：
+
+| 目录 | 是什么 | 入口 |
+| --- | --- | --- |
+| `plan/` | **① 本次计划**：12 周题单 + 题干 + 按天的作答文件（含自测） | [plan/PLAN.md](plan/PLAN.md) |
+| `archive/` | **② 归档**：之前的一切（旧题 / 答案 / 用例 / 模板 / 手撕参考实现 / DP 总纲 / 计算机基础 / 两份旧文档），仅作参考 | [archive/README.md](archive/README.md) |
 
 ```
 leetcode/
-├── problems/            # 题目（按算法分类用目录归类，每题一个 .md）
-│   ├── array/
-│   ├── hash-table/
-│   ├── two-pointers/
-│   ├── sliding-window/
-│   ├── prefix-sum/
-│   ├── stack/
-│   ├── queue/
-│   ├── linked-list/
-│   ├── binary-tree/
-│   ├── binary-search/
-│   ├── heap/
-│   ├── sorting/
-│   ├── backtracking/
-│   ├── greedy/
-│   ├── dynamic-programming/
-│   ├── bit-manipulation/
-│   └── math/
-├── solutions/           # 答案（统一放这个根目录，平铺，文件名与题目一一对应）
-│   ├── 001-two-sum.js
-│   └── ...
-└── tests/               # 每个答案对应的 jest 用例
-    └── 001-two-sum.test.js
+├── plan/                    # ① 本次计划
+│   ├── PLAN.md              # 计划唯一入口（每天做哪几道题 + 直链）
+│   ├── problems/            # 题干（按算法分类，力扣原文）
+│   ├── week-XX/dN/          # 一天的作答文件：算法题 + 手撕题混放在一起
+│   │   ├── 075-sort-colors.js
+│   │   └── 01-debounce-throttle.js
+│   └── scripts/             # review-progress.js（时间维度看板）
+└── archive/                 # ② 之前的代码与文档
 ```
 
-命名规则：`<题号>-<英文slug>.md / .js`，例如 `problems/array/001-two-sum.md` ↔ `solutions/001-two-sum.js`。
-答案文件统一 `module.exports = { 函数名 }`，并用 `require.main === module` 隔离手动运行代码。
+## 一天一个目录
 
-## 题单
+`plan/week-XX/dN/` 就是那一天要写的全部文件 —— **算法题和手撕题放在一起**。
 
-| 状态 | 题号 | 标题 | 难度 | 分类 |
-| --- | --- | --- | --- | --- |
-| ✅ | [1](problems/array/001-two-sum.md) | Two Sum | 简单 | array |
-| ✅ | [217](problems/array/217-contains-duplicate.md) | Contains Duplicate | 简单 | array |
-| ✅ | [125](problems/two-pointers/125-valid-palindrome.md) | Valid Palindrome | 简单 | two-pointers |
-| ✅ | [11](problems/two-pointers/011-container-with-most-water.md) | Container With Most Water | 中等 | two-pointers |
-| ✅ | [3](problems/sliding-window/003-longest-substring-without-repeating-characters.md) | Longest Substring Without Repeating Characters | 中等 | sliding-window |
-| ✅ | [239](problems/sliding-window/239-sliding-window-maximum.md) | Sliding Window Maximum | 困难 | sliding-window |
-| ✅ | [560](problems/prefix-sum/560-subarray-sum-equals-k.md) | Subarray Sum Equals K | 中等 | prefix-sum |
-| ✅ | [49](problems/hash-table/049-group-anagrams.md) | Group Anagrams | 中等 | hash-table |
-| ✅ | [20](problems/stack/020-valid-parentheses.md) | Valid Parentheses | 简单 | stack |
-| ✅ | [933](problems/queue/933-number-of-recent-calls.md) | Number of Recent Calls | 简单 | queue |
-| ✅ | [206](problems/linked-list/206-reverse-linked-list.md) | Reverse Linked List | 简单 | linked-list |
-| ✅ | [141](problems/linked-list/141-linked-list-cycle.md) | Linked List Cycle | 简单 | linked-list |
-| ✅ | [104](problems/binary-tree/104-maximum-depth-of-binary-tree.md) | Maximum Depth of Binary Tree | 简单 | binary-tree |
-| ✅ | [704](problems/binary-search/704-binary-search.md) | Binary Search | 简单 | binary-search |
-| ✅ | [215](problems/heap/215-kth-largest-element-in-an-array.md) | Kth Largest Element in an Array | 中等 | heap |
-| ✅ | [912](problems/sorting/912-sort-an-array.md) | Sort an Array（六种实现） | 中等 | sorting |
-| ✅ | [78](problems/backtracking/078-subsets.md) | Subsets | 中等 | backtracking |
-| ✅ | [55](problems/greedy/055-jump-game.md) | Jump Game | 中等 | greedy |
-| ✅ | [70](problems/dynamic-programming/070-climbing-stairs.md) | Climbing Stairs | 简单 | dynamic-programming |
-| ✅ | [121](problems/dynamic-programming/121-best-time-to-buy-and-sell-stock.md) | Best Time to Buy and Sell Stock | 简单 | dynamic-programming |
-| ✅ | [122](problems/dynamic-programming/122-best-time-to-buy-and-sell-stock-ii.md) | Best Time to Buy and Sell Stock II | 中等 | dynamic-programming |
-| ✅ | [188](problems/dynamic-programming/188-best-time-to-buy-and-sell-stock-iv.md) | Best Time to Buy and Sell Stock IV | 困难 | dynamic-programming |
-| ✅ | [136](problems/bit-manipulation/136-single-number.md) | Single Number | 简单 | bit-manipulation |
-| ✅ | [9](problems/math/009-palindrome-number.md) | Palindrome Number | 简单 | math |
+目录里按后缀区分文件种类：
 
-上表 ✅ 表示「题目 + 答案 + 用例」三件套都已就位。
+| 文件 | 是什么 |
+| --- | --- |
+| `xxx.js` | **作答文件**（唯一的作业），自包含：实现 + 测试素材 + 自测运行器 |
+| `xxx.notes.md` | 讲解（语义差别 / 分层实现 / 易错点 / 面试话术），不是作业 |
+| `xxx.reference.js` | 学习用的分层参考实现 + 可跑演示，**jest 会忽略**（`*.reference.js`） |
 
-`problems/` 里每题的 md 是力扣官网题干原文（逐题抓取，含示例与约束）；`solutions/` 里是对应 JS 答案，`tests/` 里是 jest 用例。`dp/` 是历史草稿区（内含正在推敲的 188 早期版本），**保留不动**；正式三件套以上面的目录为准，两边互不干扰。
+作答文件的结构：
 
-## 运行
+```
+笔记模板（算法是五问笔记 / 手撕是口述笔记）   ← 你填
+function xxx(...) { ... }                    ← 你写实现
+const CASES = [...]                          ← 测试素材（手撕题写的是 CHECKS）
+自测运行器                                    ← 不用改，跑一次出 ✅/❌ 与通过数
+```
 
 ```bash
-npm test              # 跑全部用例
-npm test -- 001       # 只跑某一题（文件名模糊匹配）
-npm run test:watch
+node plan/week-02/d1/128-longest-consecutive-sequence.js   # 当天算法题自测
+node plan/week-02/d1/10-lru-cache.js                       # 当天手撕题自测
+npm test                                                   # 全部（19 算法 + 31 手撕 = 50 个文件）
 ```
 
-## 计算机基础面试题
+## 一天怎么走
 
-见 [basics/](basics/README.md)，按 `os / network / database / architecture / data-structure` 分目录，共约 125 题 + 答案。
-# leetcode
+1. 打开 [plan/PLAN.md](plan/PLAN.md) 看当天那一行，或直接跑看板：
+   ```bash
+   npm run review          # 时间维度看板：今天该做 / 逾期未二刷 / 待二刷 / 手撕进度
+   ```
+2. 算法题：读 `plan/problems/<分类>/<题号>-<slug>.md` 的题干（**先别看目录名猜算法**，走一遍 [决策树](archive/decision-tree.md)），在当天目录的同名 js 里作答。
+3. 手撕题：直接打开当天目录里那个手撕文件（参考实现在 `archive/handwritten/`，写完再对照）。
+4. 收尾：填「复现」字段 → 再跑一次看板 → 补决策树一行。
+
+## 常用命令
+
+```bash
+npm test                    # 跑本次计划全部用例（jest 扫 plan/week-*/**）
+npm test -- 015             # 只跑某一题（文件名模糊匹配）
+npm run test:watch
+npm run test:archive        # 跑归档用例（archive/tests，默认不跑）
+
+npm run review              # 时间维度看板（全量）
+npm run review:today        # 只看今天该做（当前进度所在那一天）
+npm run review:overdue      # 只看逾期未二刷
+npm run review:hw           # 只看手撕进度（同编号多次练习合并显示）
+npm run review -- 未开始     # 状态子串过滤
+```
+
+单跑某个归档用例：`npx jest --testMatch "<rootDir>/archive/tests/*.test.js" 206`
+
+## 约定
+
+- 命名：`<题号>-<英文slug>.md / .js`，例如 `plan/problems/two-pointers/015-3sum.md` ↔ `plan/week-02/d2/015-3sum.js`。
+- 作答文件统一 `module.exports = { 函数名 }`，并用 `require.main === module` 隔离手动自测。
+- 题干一律是力扣官网原文（含示例与约束）。
+- **不自动跑测试**：只有明确要求时才执行，详见 `.codebuddy/CODEBUDDY.md`。
