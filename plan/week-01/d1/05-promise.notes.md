@@ -1,14 +1,14 @@
 # 手撕 05 讲解：手写 Promise
 
 > 同目录三个文件：
-> - `05-promise.js` —— **你的作答文件**（5 个 check，写完跑它）
+> - `05-promise.js` —— **你的作答文件**（D1 / D2 那两份各 5 个 check；D3 那份 9 个——多出的 4 个是 any / finally / allSettled）
 > - `05-promise.reference.js` —— **学习参考实现**（分三块：状态机 / then 链 / 静态方法）+ 真机时序演示
 > - 本文 —— 讲解
 >
-> 同题在 `week-02/d3`、`week-02/d4` 各还有一份，对应计划里拆的三天（状态机 → then 链 → 静态方法）。本讲解覆盖全部三天，d3/d4 也回来看这里。
+> 同题还有两份：`week-01/d2`（第 2 天 then 链）、`week-01/d3`（第 3 天 静态方法）。本讲解覆盖全部三天，写到哪份都回来看这里。
 >
 > 📌 **10-08 / 10-09 位置变更**：本题原排在第 2 周 D2/D3/D4；现已调成**连续三天，都在第 1 周**：**D1 状态机（`week-01/d1`）→ D2 then 链（`week-01/d2`）→ D3 静态方法（`week-01/d3`）**。原本占第 1 周 D1/D2/D3 的 01 防抖节流、02 call/apply/bind、03 new/instanceof 依次顺延到第 2 周 D2/D3/D4。
-> 下文（含 §5、§8）里出现的 `d2 / d3 / d4` = 本题的第 1 / 2 / 3 天，即 `week-01/d1`、`week-01/d2`、`week-01/d3`。
+> 下文（含 §5、§8）里的「第 1 / 2 / 3 天」= `week-01/d1`、`week-01/d2`、`week-01/d3`。
 
 ## 0. 怎么用（按顺序，别跳）
 
@@ -18,7 +18,7 @@
 4. 第 4 节的静态方法表，**先按表格默写语义，再看代码**。
 5. 关掉这份讲解，回作答文件从零写；跑自测，红了再回来对照。
 
-**重要提醒**：这题的作答文件是 5 个 check，覆盖从状态机到 `all/race` 的**全部**内容。计划把 05 拆成三天（d2 状态机 / d3 then 链 / d4 静态方法），前两天你的文件里靠后的 check 必然是红的——**那是进度标记，不是写错了**。
+**重要提醒**：`week-01/d3` 那份作答文件是 **9 个 check**（D1 / D2 两份是前 5 个），覆盖从状态机到 `any / allSettled`。三天各一份（第 1 天 状态机 / 第 2 天 then 链 / 第 3 天 静态方法），当天还没写的部分自然是红的——**那是进度标记，不是写错了**。
 
 ---
 
@@ -195,7 +195,7 @@ items.forEach((item, i) => {
 | --- | --- | --- | --- |
 | 第 1 天 · `week-01/d1` | **状态机**：三态 + 状态只迁移一次 + executor 同步执行 | **第 1 个** | 它直接把你的 promise 交给 `withDeadline`，不依赖 `then` 的返回值 |
 | 第 2 天 · `week-01/d2` | **then 链**：`then` 返回新 promise、值穿透、抛错捕获 | **第 2、3 个** | 都要 `then` / `catch` 返回新 promise，才拿得到链式结果 |
-| 第 3 天 · `week-01/d3` | **静态方法**：resolve / all / race | **第 4、5 个** | 需要静态方法 |
+| 第 3 天 · `week-01/d3` | **静态方法**：resolve / reject / all / race / any / allSettled | **第 4–9 个** | 需要静态方法（第 6–9 个只在 D3 那份文件里） |
 
 > ⚠️ **最容易误判的一点**：d2 只写了「`then` 里 `queueMicrotask` 调回调」时，第 2、3 个 check 会报 **`期望 undefined，实际…` 或「必须返回一个新的 Promise」** —— 那个 `undefined` 是 **`then` 的返回值**（第 1 层没有 `return`），不是 promise 里存的值丢了。状态机写对了也会这样，别去改 `resolve`。
 > 判据：`console.log(p.then(() => {}))` 打印 `undefined` ⇒ 还停在第 1 层，该写 d3 的「返回新 promise」了。
@@ -229,7 +229,7 @@ items.forEach((item, i) => {
 
 ---
 
-## 8. 自测在验什么（`05-promise.js` 的 5 个 check）
+## 8. 自测在验什么（`week-01/d3/05-promise.js` 的 9 个 check；D1 / D2 两份是前 5 个）
 
 | # | check | 验的是什么 | 属于第几天 |
 | --- | --- | --- | --- |
@@ -238,6 +238,10 @@ items.forEach((item, i) => {
 | 3 | 构造函数内抛错 → 走 catch | `try/catch` 包 executor（断言依赖 `catch` 返回 promise） | 第 2 天 |
 | 4 | 静态方法 resolve / all（保持入参顺序） | `resolve` 跟随 + `all` 按下标落位（含一个原生 promise 混入） | 第 3 天 |
 | 5 | 静态方法 race（取最先结算的） | `race` 的「结算」语义（慢的 80ms vs 立刻 resolve） | 第 3 天 |
+| 6 | 静态方法 any：第一个成功就成功 | **any 的结算语义**：慢的 50ms vs 立刻成功，中间那个失败被忽略 | 第 3 天 |
+| 7 | 静态方法 any 全失败 → AggregateError | **errors 按入参下标排列**（不是「谁先失败」）；用 `push` 就会写反 | 第 3 天 |
+| 8 | finally：不改变结论，保留原 rejection 原因 | 规范要求 `onFinally()` 返回非 thenable 时**原结果原样穿过**，不能被它顶掉 | 第 3 天 |
+| 9 | 静态方法 allSettled：全部出结果、永不失败 | 每项 `{status,value}` / `{status,reason}`，且按下标 | 第 3 天 |
 
 ### 自己补 reject 用例时怎么写（原第 6–8 个 check 已按你的要求删掉，套路留在这里）
 

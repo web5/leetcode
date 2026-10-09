@@ -12,12 +12,154 @@
  * 自带说明：await 一个 thenable 时，原生引擎会调用它的 then —— 所以下面用 await 测你的实现
  * ─────────────────────────────────────────────────
  */
+const PENDING = 'pending'
+const FULFILLED = 'fulfilled'
+const REJECTED = 'rejected'
+
+const isThenable = (x) =>
+  x !== null && (typeof x === 'object' || typeof x === 'function') && typeof x.then === 'function'
 
 /** 作答区：手写 Promise，需支持 then / catch / resolve / reject / all / race */
 class MyPromise {
   constructor(executor) {
-    throw new Error('05 MyPromise 未作答')
+    this.state = PENDING
+    this.value = null
+    this.callbacks = []
+
+    const resolve = (value) => this._settle(FULFILLED, value)
+    const reject = (reason) => this._settle(REJECTED, reason)
+
+    try {
+      executor(resolve, reject)
+    } catch(err) {
+      reject(err)
+    }
   }
+
+  _settle(state, value) {
+    if(this.state !== PENDING) return
+    if(state === FULFILLED && isThenable(value)) {
+      value.then(
+        (v) => this._settle(FULFILLED, v),
+        (r) => this._settle(REJECTED, r)
+      )
+      return
+    }
+
+    this.state = state
+    this.value = value
+    queueMicrotask(() => {
+      for(const cb of this.callbacks) this._run(cb)
+      this.callbacks = []
+    })
+  }
+
+  _run(cb) {
+    const handler = this.state === FULFILLED ? cb.onFulfilled : cb.onRejected
+    if(typeof handler !== 'function') {
+      if(this.state === FULFILLED) cb.resolve(this.value)
+      else cb.reject(this.value)
+      return
+    }
+    try {
+      cb.resolve(handler(this.value))
+    } catch(err) {
+      cb.reject(err)
+    }
+  }
+
+  then(onFulfilled, onRejected) {
+    const next = new MyPromise((resolve, reject) => {
+      const cb = {
+        onFulfilled,
+        onRejected,
+        resolve: (v) => {
+          v === next ? reject(new TypeError('Chaining cycle detected for promise')) : resolve(v)
+        },
+        reject
+      }
+      if(this.state === PENDING) this.callbacks.push(cb)
+      else queueMicrotask(() => this._run(cb))
+    })
+    return next
+  }
+
+  catch(onRejected) {
+    return this.then(undefined, onRejected)
+  }
+
+  finally(onFinally) {
+    return this.then(
+      (v) => MyPromise.resolve(onFinally()).then(() => v),
+      (e) => MyPromise.resolve(onFinally()).then(() => {
+        throw e
+      })
+    )
+  }
+
+  // 静态方法
+
+  static resolve(value) {
+    return value instanceof MyPromise ? value : new MyPromise((resolve) => resolve(value))
+  }
+
+  static reject(reason) {
+    return new MyPromise((_, reject) => reject(reason))
+  }
+
+  // 全部成功才算成功
+  static all(iterable) {
+    return new MyPromise((resolve, reject) => {
+      const items = [...iterable]
+      if(items.length === 0) return resolve([])
+      const out = new Array(items.length)
+      let done = 0
+      items.forEach((item, i) => {
+        MyPromise.resolve(item).then((v) => {
+          out[i] = v
+          done += 1
+          if(done === items.length) resolve(out)
+        }, reject)
+      })
+    })
+  }
+
+  // 永不失败
+  static allSettled(iterable) {
+    return MyPromise.all([...iterable].map(item=> {
+      return MyPromise.resolve(item).then(
+        (value)=> ({status: 'fulfilled', value}),
+        (reason) => ({status: 'rejected', reason})
+      )
+    }))
+  }
+
+  /** 第一个「结算」的说了算（成功或失败都算） */
+  static race(iterable) {
+    return new MyPromise((resolve, reject) => {
+      for(const item of iterable) {
+        MyPromise.resolve(item).then(resolve, reject)
+      }
+    })
+  }
+
+  /** 第一个「成功」的说了算；全部失败才失败（AggregateError） */
+  static any(iterable) {
+    return new MyPromise((resolve, reject) => {
+      const items = [...iterable]
+      if(items.length === 0) return reject(new AggregateError([], 'All promises were rejected'))
+      let failed = 0
+      const errors = new Array(items.length)
+      items.forEach((item, i) => {
+        MyPromise.resolve(item).then(resolve, (reason) => {
+          errors[i] = reason
+          failed += 1
+          if(failed === items.length) reject(new AggregateError(errors, 'All promises were rejected'))
+        })
+      })
+    })
+  }
+
 }
 
 /** 自测素材 */
@@ -59,6 +201,78 @@ const CHECKS = [
     run: async () => {
       const p = MyPromise.race([wait(80).then(() => 'slow'), MyPromise.resolve('fast')])
       assertEqual(await withDeadline(p), 'fast', 'race 应取最先结算的那个')
+    },
+  },
+  {
+    name: '静态方法 any：第一个成功就成功（失败的被忽略）',
+    run: async () => {
+      const p = MyPromise.any([
+        wait(50).then(() => 'slow'),
+        MyPromise.reject(new Error('先失败')),
+        MyPromise.resolve('fast'),
+      ])
+      assertEqual(await withDeadline(p), 'fast', 'any 应取第一个成功的那个')
+    },
+  },
+  {
+    // 原生语义：全部失败抛 AggregateError，且 errors 按「入参下标」排列，不是「谁先失败」
+    name: '静态方法 any 全失败 → AggregateError（errors 按下标）',
+    run: async () => {
+      let caught = null
+      try {
+        await withDeadline(
+          MyPromise.any([
+            wait(30).then(() => { throw new Error('慢的') }), // 下标 0，最后才失败
+            MyPromise.reject(new Error('快的')),              // 下标 1，立刻失败
+          ])
+        )
+      } catch (err) {
+        caught = err
+      }
+      assertEqual(caught instanceof AggregateError, true, 'any 全失败应抛 AggregateError')
+      assertEqual(
+        caught.errors.map((e) => e.message),
+        ['慢的', '快的'],
+        'errors 要按入参下标排列（用 push 就会变成到达顺序，这里是反的）'
+      )
+    },
+  },
+  {
+    name: 'finally：不改变结论，且保留原来的 rejection 原因',
+    run: async () => {
+      let ran = 0
+      assertEqual(
+        await withDeadline(MyPromise.resolve('ok').finally(() => { ran += 1 })),
+        'ok',
+        'finally 不应改变 fulfilled 的值'
+      )
+
+      const reason = new Error('原原因')
+      let caught = null
+      try {
+        await withDeadline(MyPromise.reject(reason).finally(() => { ran += 1 }))
+      } catch (err) {
+        caught = err
+      }
+      assertEqual(caught === reason, true, 'finally 之后应原样保留 rejection 原因（不是 onFinally() 的返回值）')
+      assertEqual(ran, 2, 'finally 的回调在成功 / 失败两条路上都应执行')
+    },
+  },
+  {
+    name: '静态方法 allSettled：全部出结果、永不失败',
+    run: async () => {
+      const list = await withDeadline(
+        MyPromise.allSettled([MyPromise.resolve(1), MyPromise.reject('bad'), 3])
+      )
+      assertEqual(
+        list,
+        [
+          { status: 'fulfilled', value: 1 },
+          { status: 'rejected', reason: 'bad' },
+          { status: 'fulfilled', value: 3 },
+        ],
+        'allSettled 应按下标给出每项的 status/value 或 status/reason'
+      )
     },
   },
 ]

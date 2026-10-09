@@ -165,12 +165,12 @@ leetcode/                       # 根目录只保留两桶 + 配置文件
 
 | 天 | 新题（2 道） | 二刷（2 道） | 手撕 |
 | --- | --- | --- | --- |
-| D1 | 912 排序数组 —— 盲写 冒泡 / 选择 / 插入 | — | [05 手写 Promise（状态机）](week-01/d1/05-promise.js) ✅ |
-| D2 | 912 —— 盲写 归并 / 三路快排（含随机 pivot） | 217 存在重复元素 | [05 Promise（then 链）](week-01/d2/05-promise.js) |
-| D3 | 75 颜色分类（三路快排 / 计数两解）· 274 H 指数 | 1 两数之和 | [05 Promise（静态方法）](week-01/d3/05-promise.js) |
-| D4 | 56 合并区间 ★ · 1122 数组的相对排序 | 704 二分查找 | [04 深拷贝](week-01/d4/04-deep-clone.js) |
-| D5 | 215 数组中的第 K 个最大元素（快速选择，重刷）· 347 前 K 个高频元素 | 239 滑动窗口最大值 | [08 函数工具（柯里化 / memoize）](week-01/d5/08-func-utils.js) |
-| D6 | 148 排序链表（归并）★ · 315 计算右侧小于当前元素的个数（困难，归并计数） | 49 字母异位词分组 | [09 数组工具（大数相加 / 千分位）](week-01/d6/09-array-utils.js) |
+| D1 | [912 排序数组](week-01/d1/912-sort-an-array.js) —— 盲写 冒泡 / 选择 / 插入 | — | [05 手写 Promise（状态机）](week-01/d1/05-promise.js) ✅ |
+| D2 | [912 排序数组](week-01/d2/912-sort-an-array.js) —— 盲写 归并 / 三路快排（含随机 pivot） | [217 存在重复元素](week-01/d2/217-contains-duplicate.js) | [05 Promise（then 链）](week-01/d2/05-promise.js) |
+| D3 | 75 颜色分类（三路快排 / 计数两解）· 274 H 指数 | [1 两数之和](week-01/d3/001-two-sum.js) | [05 Promise（静态方法）](week-01/d3/05-promise.js) |
+| D4 | 56 合并区间 ★ · 1122 数组的相对排序 | [704 二分查找](week-01/d4/704-binary-search.js) | [04 深拷贝](week-01/d4/04-deep-clone.js) |
+| D5 | [215 第 K 个最大元素](week-01/d5/215-kth-largest-element-in-an-array.js)（快速选择，重刷）· 347 前 K 个高频元素 | [239 滑动窗口最大值](week-01/d5/239-sliding-window-maximum.js) | [08 函数工具（柯里化 / memoize）](week-01/d5/08-func-utils.js) |
+| D6 | 148 排序链表（归并）★ · 315 计算右侧小于当前元素的个数（困难，归并计数） | [49 字母异位词分组](week-01/d6/049-group-anagrams.js) | [09 数组工具（大数相加 / 千分位）](week-01/d6/09-array-utils.js) |
 | D7 | 复盘：默写六种排序 + 填下方自查表 + 补决策树排序条目 | — | — |
 
 > 📌 **10-08 / 10-09 排期调整**（文件已跟着搬目录）——
@@ -178,6 +178,9 @@ leetcode/                       # 根目录只保留两桶 + 配置文件
 > **被挤出来的两道顺延到第 2 周**：`02 call / apply / bind` → 第 2 周 D3（`week-02/d3/`）；`03 new / instanceof` → 第 2 周 D4（`week-02/d4/`）。
 > 另：原第 1 周 D1 的 `01 防抖 / 节流` → 第 2 周 D2（`week-02/d2/`）。
 > `复现` 字段写在每份文件头。
+>
+> 📌 **旧题（912 / 217 / 1 / 704 / 215 / 239 / 49）的作答文件**：出题时我漏建了（当时只给「新题」建了文件，可 912 是被排进新题列做**重写**的）。**第 1 周的 8 份现已全部补齐**，都在对应天的目录里，直接 `node plan/week-01/dN/xxx.js` 跑：
+> D1 `912-sort-an-array.js`（冒泡 / 选择 / 插入）· D2 `912-sort-an-array.js`（归并 / 三路快排）+ `217-contains-duplicate.js` · D3 `001-two-sum.js` · D4 `704-binary-search.js` · D5 `215-kth-largest-element-in-an-array.js` + `239-sliding-window-maximum.js` · D6 `049-group-anagrams.js`。函数名与用例都对齐 `archive/` 里的旧实现，写完可直接对照。
 
 **排序自查表**（D7 填完，之后每次面试前扫一眼）：
 
